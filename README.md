@@ -1,0 +1,1 @@
+# open5gs_epc_srsran_framed_routing_sample_config
