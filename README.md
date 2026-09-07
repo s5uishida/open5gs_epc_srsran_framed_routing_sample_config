@@ -76,7 +76,7 @@ The following figure shows the netns and veth pairs within VM3.
 
 The EPC / UE / RAN used are as follows.
 - EPC - Open5GS v2.8.0(+[patch](https://github.com/open5gs/open5gs/pull/4757)) (2026.09.03) - https://github.com/open5gs/open5gs
-- UE / RAN - srsRAN_4G (2024.02.01) - https://github.com/srsran/srsRAN_4G
+- UE / RAN - srsRAN_4G (2026.01.18) - https://github.com/srsran/srsRAN_4G
 
 Each VMs are as follows.  
 | VM # | SW & Role | IP address | OS | CPU<br>(Min) | Mem<br>(Min) | HDD<br>(Min) |
@@ -116,7 +116,7 @@ PDN is as follows.
 
 Please refer to the following for building Open5GS and srsRAN_4G ZMQ UE / RAN respectively.
 - Open5GS v2.8.0(+[patch](https://github.com/open5gs/open5gs/pull/4757)) (2026.09.03) - https://open5gs.org/open5gs/docs/guide/02-building-open5gs-from-sources/
-- srsRAN_4G (2024.02.01) - https://github.com/s5uishida/build_srsran_4g_zmq_disable_rf_plugins
+- srsRAN_4G (2026.01.18) - https://github.com/s5uishida/build_srsran_4g_zmq_disable_rf_plugins
 
 <a id="changes_cp"></a>
 
@@ -602,7 +602,7 @@ Among these, the items indicated by the arrows are Framed Routes to be added.
 
 Please refer to the following for building Open5GS and srsRAN_4G ZMQ UE / RAN respectively.
 - Open5GS v2.8.0(+[patch](https://github.com/open5gs/open5gs/pull/4757)) (2026.09.03) - https://open5gs.org/open5gs/docs/guide/02-building-open5gs-from-sources/
-- srsRAN_4G (2024.02.01) - https://github.com/s5uishida/build_srsran_4g_zmq_disable_rf_plugins
+- srsRAN_4G (2026.01.18) - https://github.com/s5uishida/build_srsran_4g_zmq_disable_rf_plugins
 
 Install MongoDB on Open5GS EPC C-Plane machine.
 It is not necessary to install MongoDB on Open5GS EPC U-Plane machines.
