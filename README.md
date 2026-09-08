@@ -106,7 +106,7 @@ Subscriber Information (other information is the same) is as follows.
 | --- | --- | --- | --- | --- | --- |
 | UE | 001010000000100 | internet | OPc | **192.168.20.0/24<br>192.168.21.0/24** | **192.168.20.1<br>192.168.21.1** |
 
-**Note. <ins>192.168.22.100/24</ins> is not configured for Framed Routes.**
+**Note. <ins>192.168.22.0/24</ins> is not configured for Framed Routes.**
 
 I registered these information with the Open5GS WebUI.
 In addition, [3GPP TS 35.208](https://www.3gpp.org/DynaReport/35208.htm) "4.3 Test Sets" is published by 3GPP as test data for the 3GPP authentication and key generation functions (MILENAGE).
