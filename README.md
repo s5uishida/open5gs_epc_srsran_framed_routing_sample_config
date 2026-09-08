@@ -36,7 +36,7 @@ The code to add 4G EPC Framed Routing support to this feature has been submitted
   - [Network settings of External Node](#network_settings_ext)
   - [Network settings of VM3](#network_settings_vm3)
     - [Add netns](#add_netns)
-    - [Setup veth pair for UE and PC1/PC2](#setup_ue)
+    - [Setup veth pair for UE and PC1/PC2/PC3](#setup_ue)
 - [Add Framed Routes to Subscriber information](#add_framed_routes)
   - [Add Framed Routes to UE](#add_framed_routes_ue)
 - [Build Open5GS and srsRAN_4G ZMQ UE / RAN](#build)
@@ -48,10 +48,11 @@ The code to add 4G EPC Framed Routing support to this feature has been submitted
   - [Run srsRAN_4G ZMQ UE](#run_ue)
   - [Run tcpdump on PC1](#run_pc1)
   - [Run tcpdump on PC2](#run_pc2)
+  - [Run tcpdump on PC3](#run_pc3)
 - [Ping Framed Routes](#ping)
   - [Ping IP address (192.168.20.100/24) of Framed Routes of UE on PC1](#ping_pc1)
   - [Ping IP address (192.168.21.100/24) of Framed Routes of UE on PC2](#ping_pc2)
-  - [Ping IP address (192.168.22.100/24) of Framed Routes (not exist)](#ping_none)
+  - [Ping IP address (192.168.22.100/24) not configured for Framed Routes](#ping_pc3)
 - [Changelog (summary)](#changelog)
 
 ---
@@ -64,6 +65,7 @@ I created a CUPS-enabled EPC mobile network for the purpose of using  the IP rou
 
 The following minimum configuration was set as a condition.
 - One UE has two Framed Routes. On the UPF VM, make sure to be able to ping the Framed Routes via the IP address (Tunnel GW/tun_srsue) assigned to UE.
+- Confirm not to be able to ping to a network that is not configured in the Framed Routes.
 
 The built simulation environment is as follows.
 **According to [this](https://docs.srsran.com/projects/4g/en/latest/app_notes/source/zeromq/source/index.html#known-issues), srsRAN_4G ZMQ supports only one eNodeB and one UE, so I have confirmed the operation with the following configuration.**
@@ -89,18 +91,22 @@ Each VMs are as follows.
 || srsRAN_4G ZMQ UE | **192.168.20.1/24<br>192.168.21.1/24** | -- | -- | -- | -- |
 || PC1 Internal Node | **192.168.20.100/24** | -- | -- | -- | -- |
 || PC2 Internal Node | **192.168.21.100/24** | -- | -- | -- | -- |
+|| PC3 Internal Node | **192.168.22.100/24** | -- | -- | -- | -- |
 
 Pairs of network namespaces and virtual network interfaces are follows.
 | Role | netns | veth | veth | netns | Role |
 | --- | --- | --- | --- | --- | --- |
 | UE | ue | veth-ue-pc1<br>**192.168.20.1/24** | veth-pc1<br>**192.168.20.100/24** | pc1 | PC1 |
 ||| veth-ue-pc2<br>**192.168.21.1/24** | veth-pc2<br>**192.168.21.100/24** | pc2 | PC2 |
+||| veth-ue-pc3<br>**192.168.22.1/24** | veth-pc3<br>**192.168.22.100/24** | pc3 | PC3 |
 
 Subscriber Information (other information is the same) is as follows.  
 **Note. Please select OP or OPc according to the setting of srsRAN_4G UE configuration files. As of 2023.01.29, Framed Routes cannot be set with the WebUI. Also, if you change the `open5gs-dbctl` script, it seems that you can register these with this script, but I could not register.**
 | UE # | IMSI | APN | OP/OPc | Framed Routes | Internal IP address |
 | --- | --- | --- | --- | --- | --- |
 | UE | 001010000000100 | internet | OPc | **192.168.20.0/24<br>192.168.21.0/24** | **192.168.20.1<br>192.168.21.1** |
+
+**Note. <ins>192.168.22.100/24</ins> is not configured for Framed Routes.**
 
 I registered these information with the Open5GS WebUI.
 In addition, [3GPP TS 35.208](https://www.3gpp.org/DynaReport/35208.htm) "4.3 Test Sets" is published by 3GPP as test data for the 3GPP authentication and key generation functions (MILENAGE).
@@ -448,11 +454,12 @@ First, create the following netns for the UE and the terminals.
 ip netns add ue
 ip netns add pc1
 ip netns add pc2
+ip netns add pc3
 ```
 
 <a id="setup_ue"></a>
 
-#### Setup veth pair for UE and PC1/PC2
+#### Setup veth pair for UE and PC1/PC2/PC3
 
 First, move to `netns:ue`.
 ```
@@ -476,6 +483,13 @@ ip link set veth-pc2 netns pc2
 ip addr add 192.168.21.1/24 dev veth-ue-pc2
 ip link set veth-ue-pc2 up
 ```
+Similarly, create `veth-ue-pc3` and `veth-pc3`, then move `veth-pc3` to netns:`pc3`. Assign `192.168.22.1/24` to `veth-ue-pc3` and enable `veth-ue-pc3`.
+```
+ip link add veth-ue-pc3 type veth peer name veth-pc3
+ip link set veth-pc3 netns pc3
+ip addr add 192.168.22.1/24 dev veth-ue-pc3
+ip link set veth-ue-pc3 up
+```
 Next, move to netns:`pc1`.
 ```
 ip netns exec pc1 bash
@@ -496,6 +510,17 @@ Assign `192.168.21.100/24` ​​to `veth-pc2` and enable `veth-pc2`. Then, set 
 ip addr add 192.168.21.100/24 dev veth-pc2
 ip link set veth-pc2 up
 ip route add default via 192.168.21.1 dev veth-pc2
+ip link set lo up
+```
+Similarly, move to netns:`pc3`.
+```
+ip netns exec pc3 bash
+```
+Assign `192.168.22.100/24` ​​to `veth-pc3` and enable `veth-pc3`. Then, set `192.168.22.1` as the default route. Finally, enable interface `lo`.
+```
+ip addr add 192.168.22.100/24 dev veth-pc3
+ip link set veth-pc3 up
+ip route add default via 192.168.22.1 dev veth-pc3
 ip link set lo up
 ```
 
@@ -827,6 +852,17 @@ tcpdump: verbose output suppressed, use -v[v]... for full protocol decode
 listening on veth-pc2, link-type EN10MB (Ethernet), snapshot length 262144 bytes
 ```
 
+<a id="run_pc3"></a>
+
+### Run tcpdump on PC3
+
+On PC3, run `tcpdump` on `veth-pc3` and confirm that no frame routing is configured for UE (`192.168.22.0/24`).
+```
+# ip netns exec pc3 tcpdump -l -i veth-pc3 -n
+tcpdump: verbose output suppressed, use -v[v]... for full protocol decode
+listening on veth-pc3, link-type EN10MB (Ethernet), snapshot length 262144 bytes
+```
+
 <a id="ping"></a>
 
 ## Ping Framed Routes
@@ -877,16 +913,16 @@ The `tcpdump` log on PC2 is as follows.
 ```
 **Note. Confirm that no packets have arrived at PC1.**
 
-<a id="ping_none"></a>
+<a id="ping_pc3"></a>
 
-### Ping IP address (192.168.22.100/24) of Framed Routes (not exist)
+### Ping IP address (192.168.22.100/24) not configured for Framed Routes
 
-On EXT (External Node), ping IP address (`192.168.22.100/24`) of Framed Routes which do not exist on UE, and confirm no packets with `tcpdump` running on PC1 and PC2.
+On EXT (External Node), ping IP address (`192.168.22.100/24`) that is not configured in Framed Routes, and confirm no packets with `tcpdump` running on PC3.
 ```
 # ping 192.168.22.100
 PING 192.168.22.100 (192.168.22.100) 56(84) bytes of data.
 ```
-**Make sure there are no tcpdump logs on PC1 and PC2.**
+**Also make sure there are no tcpdump logs on PC1 and PC2.**
 
 ---
 
