@@ -13,6 +13,9 @@ The related documents can be found below.
 The code to add 4G EPC Framed Routing support to this feature has been submitted as a pull request below by **@cecrevier**.
 - [fix: support framed routes over EPC Gx](https://github.com/open5gs/open5gs/pull/4757)
 
+Afterward, the follow-up code has been submitted by **@acetcom**.
+- [proto: Fix framed-route wire format for Gx and PFCP](https://github.com/open5gs/open5gs/commit/9d72c56d08446549b80f989655def395ef5421db)
+
 ---
 
 ### [Sample Configurations and Miscellaneous for Mobile Network](https://github.com/s5uishida/sample_config_misc_for_mobile_network)
@@ -77,7 +80,7 @@ The following figure shows the netns and veth pairs within VM3.
 <img src="./images/netns-overview.png" title="./images/netns-overview.png" width=1000px></img>
 
 The EPC / UE / RAN used are as follows.
-- EPC - Open5GS v2.8.0(+[patch](https://github.com/open5gs/open5gs/pull/4757)) (2026.09.03) - https://github.com/open5gs/open5gs
+- EPC - Open5GS v2.8.0 (2026.09.16) - https://github.com/open5gs/open5gs
 - UE / RAN - srsRAN_4G (2026.01.18) - https://github.com/srsran/srsRAN_4G
 
 Each VMs are as follows.  
@@ -121,7 +124,7 @@ PDN is as follows.
 ## Changes in configuration files of Open5GS EPC and srsRAN_4G ZMQ UE / RAN
 
 Please refer to the following for building Open5GS and srsRAN_4G ZMQ UE / RAN respectively.
-- Open5GS v2.8.0(+[patch](https://github.com/open5gs/open5gs/pull/4757)) (2026.09.03) - https://open5gs.org/open5gs/docs/guide/02-building-open5gs-from-sources/
+- Open5GS v2.8.0 (2026.09.16) - https://open5gs.org/open5gs/docs/guide/02-building-open5gs-from-sources/
 - srsRAN_4G (2026.01.18) - https://github.com/s5uishida/build_srsran_4g_zmq_disable_rf_plugins
 
 <a id="changes_cp"></a>
@@ -626,7 +629,7 @@ Among these, the items indicated by the arrows are Framed Routes to be added.
 ## Build Open5GS and srsRAN_4G ZMQ UE / RAN
 
 Please refer to the following for building Open5GS and srsRAN_4G ZMQ UE / RAN respectively.
-- Open5GS v2.8.0(+[patch](https://github.com/open5gs/open5gs/pull/4757)) (2026.09.03) - https://open5gs.org/open5gs/docs/guide/02-building-open5gs-from-sources/
+- Open5GS v2.8.0 (2026.09.16) - https://open5gs.org/open5gs/docs/guide/02-building-open5gs-from-sources/
 - srsRAN_4G (2026.01.18) - https://github.com/s5uishida/build_srsran_4g_zmq_disable_rf_plugins
 
 Install MongoDB on Open5GS EPC C-Plane machine.
@@ -699,15 +702,13 @@ Setting frequency: DL=2680.0 Mhz, UL=2560.0 MHz for cc_idx=0 nof_prb=50
 
 ==== eNodeB started ===
 Type <t> to view trace
-RACH:  tti=341, cc=0, pci=1, preamble=21, offset=0, temp_crnti=0x46
-User 0x46 connected
 ```
 The Open5GS C-Plane log when executed is as follows.
 ```
-09/06 17:19:14.301: [mme] INFO: eNB-S1 accepted[192.168.0.121]:53789 in s1_path module (../src/mme/s1ap-sctp.c:114)
-09/06 17:19:14.301: [mme] INFO: eNB-S1 accepted[192.168.0.121] in master_sm module (../src/mme/mme-sm.c:109)
-09/06 17:19:14.301: [mme] INFO: [Added] Number of eNBs is now 1 (../src/mme/mme-context.c:3344)
-09/06 17:19:14.301: [mme] INFO: eNB-S1[192.168.0.121] max_num_of_ostreams : 30 (../src/mme/mme-sm.c:158)
+09/16 21:53:51.690: [mme] INFO: eNB-S1 accepted[192.168.0.121]:41791 in s1_path module (../src/mme/s1ap-sctp.c:114)
+09/16 21:53:51.690: [mme] INFO: eNB-S1 accepted[192.168.0.121] in master_sm module (../src/mme/mme-sm.c:109)
+09/16 21:53:51.690: [mme] INFO: [Added] Number of eNBs is now 1 (../src/mme/mme-context.c:3306)
+09/16 21:53:51.690: [mme] INFO: eNB-S1[192.168.0.121] max_num_of_ostreams : 30 (../src/mme/mme-sm.c:158)
 ```
 
 <a id="run_ue"></a>
@@ -738,82 +739,136 @@ Found Cell:  Mode=FDD, PCI=1, PRB=50, Ports=1, CP=Normal, CFO=-0.2 KHz
 Current sample rate is 11.52 MHz with a base rate of 23.04 MHz (x2 decimation)
 Current sample rate is 11.52 MHz with a base rate of 23.04 MHz (x2 decimation)
 Found PLMN:  Id=00101, TAC=1
-Random Access Transmission: seq=21, tti=341, ra-rnti=0x2
+Random Access Transmission: seq=8, tti=341, ra-rnti=0x2
 RRC Connected
 Random Access Complete.     c-rnti=0x46, ta=0
 Network attach successful. IP: 10.45.0.2
- nTp) ((t) 6/9/2026 8:19:21 TZ:99
+ nTp) ((t) 16/9/2026 12:55:50 TZ:99
 ```
 The Open5GS C-Plane log when executed is as follows.
 ```
-09/06 17:19:20.888: [mme] INFO: InitialUEMessage (../src/mme/s1ap-handler.c:629)
-09/06 17:19:20.888: [mme] INFO: [Added] Number of eNB-UEs is now 1 (../src/mme/mme-context.c:5863)
-09/06 17:19:20.888: [mme] INFO: Unknown UE by S_TMSI[G:2,C:1,M_TMSI:0xc00002d7] (../src/mme/s1ap-handler.c:737)
-09/06 17:19:20.888: [mme] INFO:     ENB_UE_S1AP_ID[1] MME_UE_S1AP_ID[1] TAC[1] CellID[0x19b01] (../src/mme/s1ap-handler.c:887)
-09/06 17:19:20.889: [mme] INFO: Unknown UE by GUTI[G:2,C:1,M_TMSI:0xc00002d7] (../src/mme/mme-context.c:4208)
-09/06 17:19:20.889: [mme] INFO: [EBI-TRACK] UE-CREATED ue_id[1] bitmap[0x0000] (../src/mme/mme-context.c:3994)
-09/06 17:19:20.889: [mme] INFO: [Added] Number of MME-UEs is now 1 (../src/mme/mme-context.c:3996)
-09/06 17:19:20.889: [emm] INFO: [] Attach request (../src/mme/emm-sm.c:488)
-09/06 17:19:20.889: [emm] INFO:     GUTI[G:2,C:1,M_TMSI:0xc00002d7] IMSI[Unknown IMSI] (../src/mme/emm-handler.c:287)
-09/06 17:19:20.913: [emm] INFO: Identity response (../src/mme/emm-sm.c:458)
-09/06 17:19:20.913: [emm] INFO:     IMSI[001010000000100] (../src/mme/emm-handler.c:526)
-09/06 17:19:20.982: [mme] INFO: [EBI-TRACK] EBI allocated [5] ue_id[1] IMSI[001010000000100] bitmap[0x0020] (../src/mme/mme-context.c:5678)
-09/06 17:19:20.982: [mme] INFO: [EBI-TRACK] Bearer added (EBI=5 ue_id=1 IMSI=001010000000100 bitmap=0x0020) (../src/mme/mme-context.c:5001)
-09/06 17:19:20.982: [mme] INFO: [Added] Number of MME-Sessions is now 1 (../src/mme/mme-context.c:5877)
-09/06 17:19:21.023: [sgwc] INFO: [Added] Number of SGWC-UEs is now 1 (../src/sgwc/context.c:246)
-09/06 17:19:21.023: [sgwc] INFO: Create Session Request (../src/sgwc/s11-handler.c:191)
-09/06 17:19:21.023: [sgwc] INFO: [Added] Number of SGWC-Sessions is now 1 (../src/sgwc/context.c:952)
-09/06 17:19:21.023: [sgwc] INFO: UE IMSI[001010000000100] APN[internet] (../src/sgwc/s11-handler.c:260)
-09/06 17:19:21.023: [sgwc] INFO:     TAI[PLMN_ID:00f110,TAC:1] (../src/sgwc/s11-handler.c:273)
-09/06 17:19:21.023: [sgwc] INFO:     E_CGI[PLMN_ID:00f110,CELL_ID:0x19b01] (../src/sgwc/s11-handler.c:276)
-09/06 17:19:21.023: [sgwc] INFO:     MME_S11_TEID[652] SGW_S11_TEID[86] (../src/sgwc/s11-handler.c:429)
-09/06 17:19:21.023: [sgwc] INFO: Session Establishment Request (../src/sgwc/sxa-build.c:39)
-09/06 17:19:21.024: [sgwc] INFO: Session Establishment Response (../src/sgwc/sxa-handler.c:173)
-09/06 17:19:21.024: [sgwc] INFO:     SGW_S5C_TEID[0xed5] PGW_S5C_TEID[0x0] (../src/sgwc/sxa-handler.c:276)
-09/06 17:19:21.024: [sgwc] INFO:     SGW_S5U_TEID[37250] PGW_S5U_TEID[0] (../src/sgwc/sxa-handler.c:287)
-09/06 17:19:21.024: [gtp] INFO: gtp_connect() [127.0.0.4]:2123 (../lib/gtp/path.c:60)
-09/06 17:19:21.024: [smf] INFO: [Added] Number of SMF-UEs is now 1 (../src/smf/context.c:1069)
-09/06 17:19:21.024: [smf] INFO: [Added] Number of SMF-Sessions is now 1 (../src/smf/context.c:3624)
-09/06 17:19:21.025: [smf] INFO: UE IMSI[001010000000100] APN[internet] IPv4[10.45.0.2] IPv6[] (../src/smf/s5c-handler.c:312)
-09/06 17:19:21.028: [gtp] INFO: gtp_connect() [192.168.13.151]:2152 (../lib/gtp/path.c:60)
-09/06 17:19:21.028: [sgwc] INFO: Create Session Response (../src/sgwc/s5c-handler.c:117)
-09/06 17:19:21.028: [sgwc] INFO:     MME_S11_TEID[652] SGW_S11_TEID[86] (../src/sgwc/s5c-handler.c:252)
-09/06 17:19:21.028: [sgwc] INFO:     SGW_S5C_TEID[0xed5] PGW_S5C_TEID[0x0] (../src/sgwc/s5c-handler.c:254)
-09/06 17:19:21.028: [sgwc] INFO:     SGW_S5U_TEID[51801] PGW_S5U_TEID[0] (../src/sgwc/s5c-handler.c:294)
-09/06 17:19:21.028: [sgwc] INFO:     sess_id=1 xact=0x7c1a0fc77010 (../src/sgwc/s5c-handler.c:350)
-09/06 17:19:21.028: [sgwc] INFO: PFCP Session Modification from session: sess_id=1 gtp_xact_id=1 flags=0x60004 (../src/sgwc/pfcp-path.c:414)
-09/06 17:19:21.028: [sgwc] INFO: PFCP Session Modification xact: sess_id=1 xact=0x7c1a0f814640 local_seid=0xed5 bearer_to_modify_count=1 (../src/sgwc/pfcp-path.c:297)
-09/06 17:19:21.028: [sgwc] INFO: Session Modification Request (../src/sgwc/sxa-build.c:149)
-09/06 17:19:21.028: [sgwc] INFO: PFCP Session Modification build start: sess_id=1 xact=0x7c1a0f814640 flags=0x60005 bearer_to_modify_count=1 (../src/sgwc/sxa-build.c:155)
-09/06 17:19:21.029: [sgwc] INFO: Session Modification Response (../src/sgwc/sxa-handler.c:488)
-09/06 17:19:21.289: [emm] INFO: [001010000000100] Attach complete (../src/mme/emm-sm.c:1603)
-09/06 17:19:21.289: [emm] INFO:     IMSI[001010000000100] (../src/mme/emm-handler.c:327)
-09/06 17:19:21.289: [emm] INFO:     UTC [2026-09-06T08:19:21] Timezone[0]/DST[0] (../src/mme/emm-handler.c:333)
-09/06 17:19:21.289: [emm] INFO:     LOCAL [2026-09-06T17:19:21] Timezone[32400]/DST[0] (../src/mme/emm-handler.c:337)
-09/06 17:19:21.289: [sgwc] INFO: Modify Bearer Request (../src/sgwc/s11-handler.c:478)
-09/06 17:19:21.289: [sgwc] INFO:     sess_id=1 current_xact=0x7c1a0f814748 flags=0x60003, bearer[EBI=5] (../src/sgwc/s11-handler.c:613)
-09/06 17:19:21.289: [sgwc] INFO:     MME_S11_TEID[652] SGW_S11_TEID[86] (../src/sgwc/s11-handler.c:646)
-09/06 17:19:21.289: [sgwc] INFO:     ENB_S1U_TEID[1] SGW_S1U_TEID[37250] (../src/sgwc/s11-handler.c:648)
-09/06 17:19:21.289: [sgwc] INFO:     sess_id=1 xact=0x7c1a0f814748 flags=0x60003 (../src/sgwc/s11-handler.c:662)
-09/06 17:19:21.289: [sgwc] INFO: PFCP Session Modification xact: sess_id=1 xact=0x7c1a0f814748 local_seid=0xed5 bearer_to_modify_count=1 (../src/sgwc/pfcp-path.c:297)
-09/06 17:19:21.289: [sgwc] INFO: Session Modification Request (../src/sgwc/sxa-build.c:149)
-09/06 17:19:21.289: [sgwc] INFO: PFCP Session Modification build start: sess_id=1 xact=0x7c1a0f814748 flags=0x60003 bearer_to_modify_count=1 (../src/sgwc/sxa-build.c:155)
-09/06 17:19:21.290: [sgwc] INFO: Session Modification Response (../src/sgwc/sxa-handler.c:488)
+09/16 21:55:49.800: [mme] INFO: InitialUEMessage (../src/mme/s1ap-handler.c:629)
+09/16 21:55:49.800: [mme] INFO: [Added] Number of eNB-UEs is now 1 (../src/mme/mme-context.c:5826)
+09/16 21:55:49.800: [mme] INFO: Unknown UE by S_TMSI[G:2,C:1,M_TMSI:0xc00002f7] (../src/mme/s1ap-handler.c:737)
+09/16 21:55:49.800: [mme] INFO:     ENB_UE_S1AP_ID[1] MME_UE_S1AP_ID[1] TAC[1] CellID[0x19b01] (../src/mme/s1ap-handler.c:887)
+09/16 21:55:49.801: [mme] INFO: Unknown UE by GUTI[G:2,C:1,M_TMSI:0xc00002f7] (../src/mme/mme-context.c:4171)
+09/16 21:55:49.801: [mme] INFO: [EBI-TRACK] UE-CREATED ue_id[1] bitmap[0x0000] (../src/mme/mme-context.c:3957)
+09/16 21:55:49.801: [mme] INFO: [Added] Number of MME-UEs is now 1 (../src/mme/mme-context.c:3959)
+09/16 21:55:49.801: [emm] INFO: [] Attach request (../src/mme/emm-sm.c:488)
+09/16 21:55:49.801: [emm] INFO:     GUTI[G:2,C:1,M_TMSI:0xc00002f7] IMSI[Unknown IMSI] (../src/mme/emm-handler.c:287)
+09/16 21:55:49.824: [emm] INFO: Identity response (../src/mme/emm-sm.c:458)
+09/16 21:55:49.824: [emm] INFO:     IMSI[001010000000100] (../src/mme/emm-handler.c:526)
+09/16 21:55:49.894: [mme] INFO: [EBI-TRACK] EBI allocated [5] ue_id[1] IMSI[001010000000100] bitmap[0x0020] (../src/mme/mme-context.c:5641)
+09/16 21:55:49.894: [mme] INFO: [EBI-TRACK] Bearer added (EBI=5 ue_id=1 IMSI=001010000000100 bitmap=0x0020) (../src/mme/mme-context.c:4964)
+09/16 21:55:49.894: [mme] INFO: [Added] Number of MME-Sessions is now 1 (../src/mme/mme-context.c:5840)
+09/16 21:55:49.935: [sgwc] INFO: [Added] Number of SGWC-UEs is now 1 (../src/sgwc/context.c:246)
+09/16 21:55:49.935: [sgwc] INFO: Create Session Request (../src/sgwc/s11-handler.c:191)
+09/16 21:55:49.936: [sgwc] INFO: [Added] Number of SGWC-Sessions is now 1 (../src/sgwc/context.c:952)
+09/16 21:55:49.936: [sgwc] INFO: UE IMSI[001010000000100] APN[internet] (../src/sgwc/s11-handler.c:260)
+09/16 21:55:49.936: [sgwc] INFO:     TAI[PLMN_ID:00f110,TAC:1] (../src/sgwc/s11-handler.c:273)
+09/16 21:55:49.936: [sgwc] INFO:     E_CGI[PLMN_ID:00f110,CELL_ID:0x19b01] (../src/sgwc/s11-handler.c:276)
+09/16 21:55:49.936: [sgwc] INFO:     MME_S11_TEID[707] SGW_S11_TEID[679] (../src/sgwc/s11-handler.c:429)
+09/16 21:55:49.936: [sgwc] INFO: Session Establishment Request (../src/sgwc/sxa-build.c:39)
+09/16 21:55:49.937: [sgwc] INFO: Session Establishment Response (../src/sgwc/sxa-handler.c:173)
+09/16 21:55:49.937: [sgwc] INFO:     SGW_S5C_TEID[0xb4b] PGW_S5C_TEID[0x0] (../src/sgwc/sxa-handler.c:276)
+09/16 21:55:49.937: [sgwc] INFO:     SGW_S5U_TEID[18178] PGW_S5U_TEID[0] (../src/sgwc/sxa-handler.c:287)
+09/16 21:55:49.937: [gtp] INFO: gtp_connect() [127.0.0.4]:2123 (../lib/gtp/path.c:60)
+09/16 21:55:49.938: [smf] INFO: [Added] Number of SMF-UEs is now 1 (../src/smf/context.c:1069)
+09/16 21:55:49.938: [smf] INFO: [Added] Number of SMF-Sessions is now 1 (../src/smf/context.c:3625)
+09/16 21:55:49.938: [smf] INFO: UE IMSI[001010000000100] APN[internet] IPv4[10.45.0.2] IPv6[] (../src/smf/s5c-handler.c:312)
+09/16 21:55:49.940: [pcrf] INFO: DB IPv4 framed route IMSI[001010000000100] APN[internet]: 192.168.20.0/24 (../src/pcrf/pcrf-context.c:466)
+09/16 21:55:49.940: [pcrf] INFO: DB IPv4 framed route IMSI[001010000000100] APN[internet]: 192.168.21.0/24 (../src/pcrf/pcrf-context.c:466)
+09/16 21:55:49.940: [pcrf] INFO: Gx CCA add Framed-Route: 192.168.20.0/24 0.0.0.0 1 (../src/pcrf/pcrf-gx-path.c:677)
+09/16 21:55:49.940: [pcrf] INFO: Gx CCA add Framed-Route: 192.168.21.0/24 0.0.0.0 1 (../src/pcrf/pcrf-gx-path.c:677)
+09/16 21:55:49.940: [smf] INFO: Gx CCA received Framed-Route: 192.168.20.0/24 (../src/smf/gx-path.c:1136)
+09/16 21:55:49.941: [smf] INFO: Gx CCA received Framed-Route: 192.168.21.0/24 (../src/smf/gx-path.c:1136)
+09/16 21:55:49.941: [smf] INFO: SMF session IPv4 framed route: 192.168.20.0/24 (../src/smf/gx-handler.c:93)
+09/16 21:55:49.941: [smf] INFO: SMF session IPv4 framed route: 192.168.21.0/24 (../src/smf/gx-handler.c:93)
+09/16 21:55:49.941: [smf] INFO: PFCP DL/UL PDR IPv4 framed route: 192.168.20.0/24 0.0.0.0 1 (../src/smf/gx-handler.c:256)
+09/16 21:55:49.941: [smf] INFO: PFCP DL/UL PDR IPv4 framed route: 192.168.21.0/24 0.0.0.0 1 (../src/smf/gx-handler.c:256)
+09/16 21:55:49.941: [pfcp] INFO: PFCP encode Framed-Route in PDR[1]: 192.168.20.0/24 0.0.0.0 1 (../lib/pfcp/build.c:365)
+09/16 21:55:49.941: [pfcp] INFO: PFCP encode Framed-Route in PDR[1]: 192.168.21.0/24 0.0.0.0 1 (../lib/pfcp/build.c:365)
+09/16 21:55:49.941: [pfcp] INFO: PFCP encode Framed-Route in PDR[2]: 192.168.20.0/24 0.0.0.0 1 (../lib/pfcp/build.c:365)
+09/16 21:55:49.941: [pfcp] INFO: PFCP encode Framed-Route in PDR[2]: 192.168.21.0/24 0.0.0.0 1 (../lib/pfcp/build.c:365)
+09/16 21:55:49.942: [gtp] INFO: gtp_connect() [192.168.13.151]:2152 (../lib/gtp/path.c:60)
+09/16 21:55:49.942: [sgwc] INFO: Create Session Response (../src/sgwc/s5c-handler.c:117)
+09/16 21:55:49.942: [sgwc] INFO:     MME_S11_TEID[707] SGW_S11_TEID[679] (../src/sgwc/s5c-handler.c:252)
+09/16 21:55:49.942: [sgwc] INFO:     SGW_S5C_TEID[0xb4b] PGW_S5C_TEID[0x0] (../src/sgwc/s5c-handler.c:254)
+09/16 21:55:49.942: [sgwc] INFO:     SGW_S5U_TEID[6349] PGW_S5U_TEID[0] (../src/sgwc/s5c-handler.c:294)
+09/16 21:55:49.942: [sgwc] INFO:     sess_id=1 xact=0x79100f0d0010 (../src/sgwc/s5c-handler.c:350)
+09/16 21:55:49.942: [sgwc] INFO: PFCP Session Modification from session: sess_id=1 gtp_xact_id=1 flags=0x60004 (../src/sgwc/pfcp-path.c:414)
+09/16 21:55:49.942: [sgwc] INFO: PFCP Session Modification xact: sess_id=1 xact=0x79100ec6eae0 local_seid=0xb4b bearer_to_modify_count=1 (../src/sgwc/pfcp-path.c:297)
+09/16 21:55:49.942: [sgwc] INFO: Session Modification Request (../src/sgwc/sxa-build.c:149)
+09/16 21:55:49.942: [sgwc] INFO: PFCP Session Modification build start: sess_id=1 xact=0x79100ec6eae0 flags=0x60005 bearer_to_modify_count=1 (../src/sgwc/sxa-build.c:155)
+09/16 21:55:49.943: [sgwc] INFO: Session Modification Response (../src/sgwc/sxa-handler.c:488)
+09/16 21:55:50.203: [emm] INFO: [001010000000100] Attach complete (../src/mme/emm-sm.c:1603)
+09/16 21:55:50.203: [emm] INFO:     IMSI[001010000000100] (../src/mme/emm-handler.c:327)
+09/16 21:55:50.203: [emm] INFO:     UTC [2026-09-16T12:55:50] Timezone[0]/DST[0] (../src/mme/emm-handler.c:333)
+09/16 21:55:50.203: [emm] INFO:     LOCAL [2026-09-16T21:55:50] Timezone[32400]/DST[0] (../src/mme/emm-handler.c:337)
+09/16 21:55:50.203: [sgwc] INFO: Modify Bearer Request (../src/sgwc/s11-handler.c:478)
+09/16 21:55:50.203: [sgwc] INFO:     sess_id=1 current_xact=0x79100ec6ebe8 flags=0x60003, bearer[EBI=5] (../src/sgwc/s11-handler.c:613)
+09/16 21:55:50.203: [sgwc] INFO:     MME_S11_TEID[707] SGW_S11_TEID[679] (../src/sgwc/s11-handler.c:646)
+09/16 21:55:50.203: [sgwc] INFO:     ENB_S1U_TEID[1] SGW_S1U_TEID[18178] (../src/sgwc/s11-handler.c:648)
+09/16 21:55:50.203: [sgwc] INFO:     sess_id=1 xact=0x79100ec6ebe8 flags=0x60003 (../src/sgwc/s11-handler.c:662)
+09/16 21:55:50.203: [sgwc] INFO: PFCP Session Modification xact: sess_id=1 xact=0x79100ec6ebe8 local_seid=0xb4b bearer_to_modify_count=1 (../src/sgwc/pfcp-path.c:297)
+09/16 21:55:50.203: [sgwc] INFO: Session Modification Request (../src/sgwc/sxa-build.c:149)
+09/16 21:55:50.203: [sgwc] INFO: PFCP Session Modification build start: sess_id=1 xact=0x79100ec6ebe8 flags=0x60003 bearer_to_modify_count=1 (../src/sgwc/sxa-build.c:155)
+09/16 21:55:50.204: [sgwc] INFO: Session Modification Response (../src/sgwc/sxa-handler.c:488)
 ```
 The Open5GS U-Plane (SGW-U) log when executed is as follows.
 ```
-09/06 17:19:21.038: [sgwu] INFO: UE F-SEID[UP:0xe79 CP:0xed5] (../src/sgwu/context.c:173)
-09/06 17:19:21.038: [sgwu] INFO: [Added] Number of SGWU-Sessions is now 1 (../src/sgwu/context.c:178)
-09/06 17:19:21.043: [gtp] INFO: gtp_connect() [192.168.13.151]:2152 (../lib/gtp/path.c:60)
-09/06 17:19:21.304: [gtp] INFO: gtp_connect() [192.168.13.121]:2152 (../lib/gtp/path.c:60)
+09/16 21:55:49.971: [sgwu] INFO: UE F-SEID[UP:0x3b3 CP:0xb4b] (../src/sgwu/context.c:173)
+09/16 21:55:49.971: [sgwu] INFO: [Added] Number of SGWU-Sessions is now 1 (../src/sgwu/context.c:178)
+09/16 21:55:49.971: [pfcp] INFO: Apply Create PDR: PDR-ID[1] (../lib/pfcp/handler.c:886)
+09/16 21:55:49.971: [pfcp] INFO: Apply Create PDR: PDR-ID[2] (../lib/pfcp/handler.c:886)
+09/16 21:55:49.972: [pfcp] INFO: Apply Create FAR: FAR-ID[1] (../lib/pfcp/handler.c:1399)
+09/16 21:55:49.972: [pfcp] INFO: Apply Create FAR: FAR-ID[2] (../lib/pfcp/handler.c:1399)
+09/16 21:55:49.972: [pfcp] INFO: Apply Create BAR: BAR-ID[1] (../lib/pfcp/handler.c:1799)
+09/16 21:55:49.972: [pfcp] INFO: Register local F-TEID[0x4702] [PDR-ID:1 type:2] (../lib/pfcp/context.c:1623)
+09/16 21:55:49.972: [pfcp] INFO: Register local F-TEID[0x18cd] [PDR-ID:2 type:2] (../lib/pfcp/context.c:1623)
+09/16 21:55:49.978: [sgwu] INFO: Session Modification Request [xid:15] [UP-SEID:0x3b3 CP-SEID:0xb4b] (../src/sgwu/sxa-handler.c:195)
+09/16 21:55:49.978: [pfcp] INFO: Mark rules [PDR:2 FAR:2 URR:0 QER:0 BAR:1] (../lib/pfcp/context.c:1377)
+09/16 21:55:49.978: [pfcp] INFO: Apply Update PDR: PDR-ID[2] (../lib/pfcp/handler.c:1203)
+09/16 21:55:49.978: [gtp] INFO: gtp_connect() [192.168.13.151]:2152 (../lib/gtp/path.c:60)
+09/16 21:55:49.978: [pfcp] WARNING: Set FAR-ID[2] GTP-U peer [TEID:0x9801] (../lib/pfcp/context.c:1262)
+09/16 21:55:49.978: [pfcp] INFO: Register Error Indication F-TEID[0x9801] [FAR-ID:2] (../lib/pfcp/context.c:2047)
+09/16 21:55:49.978: [pfcp] INFO: Updated FAR GTP-U tunnel: FAR-ID[2] TEID[0x0->0x9801] (../lib/pfcp/handler.c:1544)
+09/16 21:55:49.978: [pfcp] INFO: Apply Update FAR: FAR-ID[2] (../lib/pfcp/handler.c:1551)
+09/16 21:55:50.238: [sgwu] INFO: Session Modification Request [xid:16] [UP-SEID:0x3b3 CP-SEID:0xb4b] (../src/sgwu/sxa-handler.c:195)
+09/16 21:55:50.239: [pfcp] INFO: Mark rules [PDR:2 FAR:2 URR:0 QER:0 BAR:1] (../lib/pfcp/context.c:1377)
+09/16 21:55:50.239: [pfcp] INFO: Apply Update PDR: PDR-ID[1] (../lib/pfcp/handler.c:1203)
+09/16 21:55:50.239: [gtp] INFO: gtp_connect() [192.168.13.121]:2152 (../lib/gtp/path.c:60)
+09/16 21:55:50.239: [pfcp] WARNING: Set FAR-ID[1] GTP-U peer [TEID:0x1] (../lib/pfcp/context.c:1262)
+09/16 21:55:50.239: [pfcp] INFO: Register Error Indication F-TEID[0x1] [FAR-ID:1] (../lib/pfcp/context.c:2047)
+09/16 21:55:50.239: [pfcp] INFO: Updated FAR GTP-U tunnel: FAR-ID[1] TEID[0x0->0x1] (../lib/pfcp/handler.c:1544)
+09/16 21:55:50.239: [pfcp] INFO: Apply Update FAR: FAR-ID[1] (../lib/pfcp/handler.c:1551)
 ```
 The Open5GS U-Plane (PGW-U) log when executed is as follows.
 ```
-09/06 17:19:21.018: [upf] INFO: [Added] Number of UPF-Sessions is now 1 (../src/upf/context.c:231)
-09/06 17:19:21.018: [gtp] INFO: gtp_connect() [192.168.13.112]:2152 (../lib/gtp/path.c:60)
-09/06 17:19:21.019: [gtp] INFO: gtp_connect() [192.168.14.111]:2152 (../lib/gtp/path.c:60)
-09/06 17:19:21.019: [upf] INFO: UE F-SEID[UP:0xf08 CP:0x77d] APN[internet] PDN-Type[1] IPv4[10.45.0.2] IPv6[] (../src/upf/context.c:575)
-09/06 17:19:21.019: [upf] INFO: UE F-SEID[UP:0xf08 CP:0x77d] APN[internet] PDN-Type[1] IPv4[10.45.0.2] IPv6[] (../src/upf/context.c:575)
+09/16 21:55:49.921: [upf] INFO: [Added] Number of UPF-Sessions is now 1 (../src/upf/context.c:231)
+09/16 21:55:49.921: [pfcp] INFO: Apply Create PDR: PDR-ID[1] (../lib/pfcp/handler.c:886)
+09/16 21:55:49.921: [pfcp] INFO: Apply Create PDR: PDR-ID[2] (../lib/pfcp/handler.c:886)
+09/16 21:55:49.921: [pfcp] INFO: Apply Create PDR: PDR-ID[3] (../lib/pfcp/handler.c:886)
+09/16 21:55:49.921: [pfcp] INFO: Apply Create PDR: PDR-ID[4] (../lib/pfcp/handler.c:886)
+09/16 21:55:49.921: [pfcp] INFO: Apply Create FAR: FAR-ID[1] (../lib/pfcp/handler.c:1399)
+09/16 21:55:49.921: [pfcp] INFO: Apply Create FAR: FAR-ID[2] (../lib/pfcp/handler.c:1399)
+09/16 21:55:49.921: [pfcp] INFO: Apply Create FAR: FAR-ID[3] (../lib/pfcp/handler.c:1399)
+09/16 21:55:49.921: [pfcp] INFO: Apply Create QER: QER-ID[1] (../lib/pfcp/handler.c:1669)
+09/16 21:55:49.921: [pfcp] INFO: Apply Create BAR: BAR-ID[1] (../lib/pfcp/handler.c:1799)
+09/16 21:55:49.921: [gtp] INFO: gtp_connect() [192.168.13.112]:2152 (../lib/gtp/path.c:60)
+09/16 21:55:49.921: [pfcp] WARNING: Set FAR-ID[1] GTP-U peer [TEID:0x4702] (../lib/pfcp/context.c:1262)
+09/16 21:55:49.921: [pfcp] INFO: Register Error Indication F-TEID[0x4702] [FAR-ID:1] (../lib/pfcp/context.c:2047)
+09/16 21:55:49.921: [gtp] INFO: gtp_connect() [192.168.14.111]:2152 (../lib/gtp/path.c:60)
+09/16 21:55:49.921: [pfcp] WARNING: Set FAR-ID[3] GTP-U peer [TEID:0x1] (../lib/pfcp/context.c:1262)
+09/16 21:55:49.921: [pfcp] INFO: Register Error Indication F-TEID[0x1] [FAR-ID:3] (../lib/pfcp/context.c:2047)
+09/16 21:55:49.921: [upf] INFO: UE F-SEID[UP:0x964 CP:0xaa4] APN[internet] PDN-Type[1] IPv4[10.45.0.2] IPv6[] (../src/upf/context.c:575)
+09/16 21:55:49.921: [upf] INFO: UPF registered IPv4 framed route[192.168.20.0/24 0.0.0.0 1] for SEID[0x964] (../src/upf/context.c:724)
+09/16 21:55:49.921: [upf] INFO: UPF registered IPv4 framed route[192.168.21.0/24 0.0.0.0 1] for SEID[0x964] (../src/upf/context.c:724)
+09/16 21:55:49.921: [upf] INFO: UE F-SEID[UP:0x964 CP:0xaa4] APN[internet] PDN-Type[1] IPv4[10.45.0.2] IPv6[] (../src/upf/context.c:575)
+09/16 21:55:49.921: [upf] INFO: UPF registered IPv4 framed route[192.168.20.0/24 0.0.0.0 1] for SEID[0x964] (../src/upf/context.c:724)
+09/16 21:55:49.921: [upf] INFO: UPF registered IPv4 framed route[192.168.21.0/24 0.0.0.0 1] for SEID[0x964] (../src/upf/context.c:724)
+09/16 21:55:49.921: [pfcp] INFO: Register local F-TEID[0x9801] [PDR-ID:2 type:1] (../lib/pfcp/context.c:1623)
+09/16 21:55:49.921: [pfcp] INFO: Register local F-TEID[0xe3f] [PDR-ID:3 type:1] (../lib/pfcp/context.c:1623)
 ```
 The output of `ip addr show` for netns:`ue` on VM3 is as follows.
 ```
@@ -875,18 +930,18 @@ On EXT (External Node), ping IP address (`192.168.20.100/24`) of Framed Routes o
 ```
 # ping 192.168.20.100
 PING 192.168.20.100 (192.168.20.100) 56(84) bytes of data.
-64 bytes from 192.168.20.100: icmp_seq=1 ttl=62 time=35.3 ms
-64 bytes from 192.168.20.100: icmp_seq=2 ttl=62 time=29.1 ms
-64 bytes from 192.168.20.100: icmp_seq=3 ttl=62 time=22.9 ms
+64 bytes from 192.168.20.100: icmp_seq=1 ttl=62 time=39.7 ms
+64 bytes from 192.168.20.100: icmp_seq=2 ttl=62 time=36.6 ms
+64 bytes from 192.168.20.100: icmp_seq=3 ttl=62 time=32.5 ms
 ```
 The `tcpdump` log on PC1 is as follows.
 ```
-17:25:43.303502 IP 192.168.16.152 > 192.168.20.100: ICMP echo request, id 1224, seq 1, length 64
-17:25:43.303514 IP 192.168.20.100 > 192.168.16.152: ICMP echo reply, id 1224, seq 1, length 64
-17:25:44.304142 IP 192.168.16.152 > 192.168.20.100: ICMP echo request, id 1224, seq 2, length 64
-17:25:44.304154 IP 192.168.20.100 > 192.168.16.152: ICMP echo reply, id 1224, seq 2, length 64
-17:25:45.306702 IP 192.168.16.152 > 192.168.20.100: ICMP echo request, id 1224, seq 3, length 64
-17:25:45.306714 IP 192.168.20.100 > 192.168.16.152: ICMP echo reply, id 1224, seq 3, length 64
+22:02:52.382678 IP 192.168.16.152 > 192.168.20.100: ICMP echo request, id 1172, seq 1, length 64
+22:02:52.382692 IP 192.168.20.100 > 192.168.16.152: ICMP echo reply, id 1172, seq 1, length 64
+22:02:53.383566 IP 192.168.16.152 > 192.168.20.100: ICMP echo request, id 1172, seq 2, length 64
+22:02:53.383578 IP 192.168.20.100 > 192.168.16.152: ICMP echo reply, id 1172, seq 2, length 64
+22:02:54.386210 IP 192.168.16.152 > 192.168.20.100: ICMP echo request, id 1172, seq 3, length 64
+22:02:54.386223 IP 192.168.20.100 > 192.168.16.152: ICMP echo reply, id 1172, seq 3, length 64
 ```
 **Note. Confirm that no packets have arrived at PC2.**
 
@@ -898,18 +953,18 @@ On EXT (External Node), ping IP address (`192.168.21.100/24`) of Framed Routes o
 ```
 # ping 192.168.21.100
 PING 192.168.21.100 (192.168.21.100) 56(84) bytes of data.
-64 bytes from 192.168.21.100: icmp_seq=1 ttl=62 time=35.5 ms
-64 bytes from 192.168.21.100: icmp_seq=2 ttl=62 time=27.6 ms
-64 bytes from 192.168.21.100: icmp_seq=3 ttl=62 time=41.3 ms
+64 bytes from 192.168.21.100: icmp_seq=1 ttl=62 time=37.5 ms
+64 bytes from 192.168.21.100: icmp_seq=2 ttl=62 time=32.7 ms
+64 bytes from 192.168.21.100: icmp_seq=3 ttl=62 time=28.9 ms
 ```
 The `tcpdump` log on PC2 is as follows.
 ```
-17:26:54.494578 IP 192.168.16.152 > 192.168.21.100: ICMP echo request, id 1226, seq 1, length 64
-17:26:54.494590 IP 192.168.21.100 > 192.168.16.152: ICMP echo reply, id 1226, seq 1, length 64
-17:26:55.496901 IP 192.168.16.152 > 192.168.21.100: ICMP echo request, id 1226, seq 2, length 64
-17:26:55.496913 IP 192.168.21.100 > 192.168.16.152: ICMP echo reply, id 1226, seq 2, length 64
-17:26:56.498267 IP 192.168.16.152 > 192.168.21.100: ICMP echo request, id 1226, seq 3, length 64
-17:26:56.498279 IP 192.168.21.100 > 192.168.16.152: ICMP echo reply, id 1226, seq 3, length 64
+22:03:54.861817 IP 192.168.16.152 > 192.168.21.100: ICMP echo request, id 1175, seq 1, length 64
+22:03:54.861831 IP 192.168.21.100 > 192.168.16.152: ICMP echo reply, id 1175, seq 1, length 64
+22:03:55.863910 IP 192.168.16.152 > 192.168.21.100: ICMP echo request, id 1175, seq 2, length 64
+22:03:55.863923 IP 192.168.21.100 > 192.168.16.152: ICMP echo reply, id 1175, seq 2, length 64
+22:03:56.866269 IP 192.168.16.152 > 192.168.21.100: ICMP echo request, id 1175, seq 3, length 64
+22:03:56.866282 IP 192.168.21.100 > 192.168.16.152: ICMP echo reply, id 1175, seq 3, length 64
 ```
 **Note. Confirm that no packets have arrived at PC1.**
 
@@ -937,4 +992,5 @@ I would like to thank the excellent developers and all the contributors of Open5
 
 ## Changelog (summary)
 
+- [2026.09.16] Updated to Open5GS with [fix: support framed routes over EPC Gx](https://github.com/open5gs/open5gs/pull/4757) merged.
 - [2026.09.06] Initial release.
